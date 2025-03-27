@@ -49,6 +49,25 @@ async function run() {
             res.send(result)
         })
 
+
+        app.put('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const user = req.body;
+            console.log(user);
+            const filter = { _id: new ObjectId(id)}
+            const options = { upsert: true }
+            const updateDoc = {
+                $set: {
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    password: user.password,
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
+
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
             console.log(id);
@@ -56,6 +75,9 @@ async function run() {
             const result = await usersCollection.deleteOne(query);
             res.send(result);
         })
+
+
+    
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
